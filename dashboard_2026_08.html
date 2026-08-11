@@ -273,6 +273,15 @@ body{
   </div>
 </div>
 
+<!-- 模块九：各项目时序进度差值排序 -->
+<div class="row">
+  <div class="panel" style="flex:1">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目时序进度差值排序</div>
+    <div class="chart-box" style="height:520px"><canvas id="chartGapRank"></canvas></div>
+  </div>
+</div>
+
 <script>
 const projects = [
   {name:'阴山优麦冲饮', group:'A组', gmv:820628.73, dur:180.0, target:2280000.00, pct:36.0, seqPct:111.6, latest:81644.25, latestRaw:96052.06, remain:1459371.27, remainDays:21, needed:69493.87, targetSeqGsv:735483.87, daily:[84989.9,96116.24,62925.5,77124.42,79309.09,90723.49,69393.17,72424.44,105978.23,81644.25]},
@@ -599,6 +608,78 @@ new Chart(document.getElementById('chartOverview'),{
         ctx.fillRect(midX - tw/2 - 4, midY - 9, tw + 8, 18);
         ctx.fillStyle = color;
         ctx.fillText(valText, midX, midY);
+      });
+      ctx.restore();
+    }
+  }]
+});
+
+// ==================== Module 9: 时序进度差值排序 ====================
+const sortedNeeded = [...projects].sort((a,b)=>b.needed - a.needed);
+new Chart(document.getElementById('chartGapRank'),{
+  type:'bar',
+  data:{
+    labels: sortedNeeded.map(p=>p.name),
+    datasets: [{
+      data: sortedNeeded.map(p=>p.needed),
+      backgroundColor: sortedNeeded.map(p=>{
+        // 颜色按紧迫度：日均>5万红色，1-5万黄色，<1万绿色
+        if(p.needed>=50000) return '#ff4d4f';
+        if(p.needed>=10000) return '#ffcc00';
+        return '#00ff88';
+      }),
+      borderRadius: 4,
+      borderWidth: 0,
+    }]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'rgba(13,25,48,0.95)',
+        borderColor:'#1e3a5f',
+        borderWidth:1,
+        titleColor:'#00d4ff',
+        bodyColor:'#e6f7ff',
+        callbacks:{
+          label:function(ctx){
+            return '剩余日均: ¥'+ctx.raw.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2})+'/天';
+          }
+        }
+      }
+    },
+    scales:{
+      x:{
+        grid:{color:'rgba(30,58,95,0.4)'},
+        ticks:{
+          color:'#8ba4be',
+          font:{size:10},
+          callback:function(v){return '¥'+(v/10000).toFixed(1)+'W/天';}
+        }
+      },
+      y:{
+        grid:{display:false},
+        ticks:{color:'#c9d1d9',font:{size:11}}
+      }
+    }
+  },
+  plugins:[{
+    id:'gapRankLabels',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = "bold 10px 'Microsoft YaHei'";
+      ctx.textBaseline = 'middle';
+      meta.data.forEach((bar, i)=>{
+        const v = sortedNeeded[i].needed;
+        const wText = '¥'+(v/10000).toFixed(1)+'W';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'left';
+        ctx.fillText(wText, bar.x + 6, bar.y);
       });
       ctx.restore();
     }
