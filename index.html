@@ -166,21 +166,21 @@ body{
 <div class="kpi-row" id="kpiAccum">
   <div class="panel kpi-card kpi-blue">
     <div class="corner-bl"></div><div class="corner-br"></div>
-    <div class="kpi-label">当月总GMV（累计）</div>
+    <div class="kpi-label">当月总GSV（累计）</div>
     <div class="kpi-value" id="kpiTotalGmv">--</div>
     <div class="kpi-sub">8月1日-10日 累计成交</div>
   </div>
   <div class="panel kpi-card kpi-purple">
     <div class="corner-bl"></div><div class="corner-br"></div>
-    <div class="kpi-label">本月目标GMV</div>
+    <div class="kpi-label">本月目标GSV</div>
     <div class="kpi-value" id="kpiTotalTarget">--</div>
-    <div class="kpi-sub">月度GMV目标</div>
+    <div class="kpi-sub">月度GSV目标</div>
   </div>
   <div class="panel kpi-card kpi-red">
     <div class="corner-bl"></div><div class="corner-br"></div>
     <div class="kpi-label">销售差额</div>
     <div class="kpi-value" id="kpiGap">--</div>
-    <div class="kpi-sub">目标 - 累计GMV</div>
+    <div class="kpi-sub">目标 - 累计GSV</div>
   </div>
   <div class="panel kpi-card kpi-green">
     <div class="corner-bl"></div><div class="corner-br"></div>
@@ -194,7 +194,7 @@ body{
 <div class="kpi-row" id="kpiToday">
   <div class="panel kpi-card kpi-blue">
     <div class="corner-bl"></div><div class="corner-br"></div>
-    <div class="kpi-label">当日总GMV</div>
+    <div class="kpi-label">当日总GSV</div>
     <div class="kpi-value" id="kpiTodayGmv">--</div>
     <div class="kpi-sub">8月10日 成交总额</div>
   </div>
@@ -208,7 +208,7 @@ body{
     <div class="corner-bl"></div><div class="corner-br"></div>
     <div class="kpi-label">当日开播项目</div>
     <div class="kpi-value" id="kpiLiveProjects">--</div>
-    <div class="kpi-sub">有GMV数据的项目数</div>
+    <div class="kpi-sub">有GSV数据的项目数</div>
   </div>
   <div class="panel kpi-card kpi-blue">
     <div class="corner-bl"></div><div class="corner-br"></div>
@@ -222,7 +222,7 @@ body{
 <div class="row">
   <div class="col-2 panel panel-donut">
     <div class="corner-bl"></div><div class="corner-br"></div>
-    <div class="panel-title">聚光各项目本月GMV完成进度变化汇总（含DP项目及自营项目）</div>
+    <div class="panel-title">聚光各项目本月GSV完成进度变化汇总（含DP项目及自营项目）</div>
     <div class="donut-grid" id="donutGrid">
       <!-- dynamically filled -->
     </div>
@@ -243,7 +243,7 @@ body{
   </div>
   <div class="col-half panel">
     <div class="corner-bl"></div><div class="corner-br"></div>
-    <div class="panel-title">各项目本月度GMV排名（含DP项目及自营项目）</div>
+    <div class="panel-title">各项目本月度GSV排名（含DP项目及自营项目）</div>
     <div class="chart-box"><canvas id="chartGmv"></canvas></div>
   </div>
 </div>
@@ -438,7 +438,7 @@ new Chart(document.getElementById('chartDuration'),{
 
 // ==================== Final Table ====================
 const sortedFinal = [...projects].sort((a,b)=>b.pct-a.pct);
-let thtml = `<thead><tr><th>#</th><th>项目</th><th>区域</th><th>完成率</th><th>当月GMV</th><th>剩余GMV</th><th>剩余日均</th></tr></thead><tbody>`;
+let thtml = `<thead><tr><th>#</th><th>项目</th><th>区域</th><th>完成率</th><th>当月GSV</th><th>剩余GSV</th><th>剩余日均</th></tr></thead><tbody>`;
 sortedFinal.forEach((p,i)=>{
   const cls = pctCls(p.pct);
   const gcls = p.group==='A组'?'group-a':p.group==='B组'?'group-b':'group-o';
