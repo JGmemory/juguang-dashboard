@@ -559,19 +559,25 @@ new Chart(document.getElementById('chartOverview'),{
     }
   },
   plugins:[{
-    id:'overviewGroupLabels',
-    afterDraw(chart){
+    id:'overviewDiffLabels',
+    afterDatasetsDraw(chart){
       const {ctx, scales:{x,y}} = chart;
+      const meta0 = chart.getDatasetMeta(0); // 目标柱
+      const meta1 = chart.getDatasetMeta(1); // 实际柱
       ctx.save();
-      ctx.font="bold 11px 'Microsoft YaHei'";
       ctx.textAlign='center';
-      overviewLabels.forEach((name, i)=>{
-        const g = overviewGroups[i];
-        const gc = groupColors[g].main;
-        const xPos = x.getPixelForValue(i);
-        const yPos = y.bottom + 18;
-        ctx.fillStyle = gc;
-        ctx.fillText('['+g+']', xPos, yPos);
+      ctx.textBaseline='bottom';
+      sortedOverview.forEach((p, i)=>{
+        const diff = p.gmv - p.targetSeqGsv;
+        const bar0 = meta0.data[i];
+        const bar1 = meta1.data[i];
+        const topY = Math.min(bar0.y, bar1.y);
+        const midX = (bar0.x + bar1.x) / 2;
+        const sign = diff >= 0 ? '+' : '';
+        const valText = '¥' + sign + (diff/10000).toFixed(1) + '万';
+        ctx.font = "bold 10px 'Microsoft YaHei'";
+        ctx.fillStyle = diff >= 0 ? '#00ff88' : '#ff4d4f';
+        ctx.fillText(valText, midX, topY - 6);
       });
       ctx.restore();
     }
