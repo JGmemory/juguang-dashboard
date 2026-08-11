@@ -264,23 +264,32 @@ body{
   </div>
 </div>
 
+<!-- 模块八：各项目时序进度及目标进度概览 -->
+<div class="row">
+  <div class="panel" style="flex:1">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目时序进度及目标进度概览</div>
+    <div class="chart-box" style="height:520px"><canvas id="chartOverview"></canvas></div>
+  </div>
+</div>
+
 <script>
 const projects = [
-  {name:'阴山优麦冲饮', group:'A组', gmv:820628.73, dur:180.0, target:2280000.00, pct:36.0, seqPct:111.6, latest:81644.25, latestRaw:96052.06, remain:1459371.27, remainDays:21, needed:69493.87, daily:[84989.9,96116.24,62925.5,77124.42,79309.09,90723.49,69393.17,72424.44,105978.23,81644.25]},
-  {name:'阴山优麦食品', group:'A组', gmv:200485.58, dur:126.0, target:720000.00, pct:27.8, seqPct:86.3, latest:18869.66, latestRaw:22199.60, remain:519514.42, remainDays:21, needed:24738.78, daily:[24167.03,17606.34,17032.42,26353.94,18618.06,23210.01,15497.23,17709.07,21421.82,18869.66]},
-  {name:'追觅吸尘', group:'A组', gmv:59839.80, dur:102.0, target:420000.00, pct:14.2, seqPct:44.2, latest:4917.00, latestRaw:8195.00, remain:360160.20, remainDays:21, needed:17150.49, daily:[1078.2,1858.2,7405.2,2878.2,5396.4,7195.2,12292.2,6505.8,10313.4,4917.0]},
-  {name:'追觅投影', group:'A组', gmv:18249.70, dur:14.4, target:280000.00, pct:6.5, seqPct:20.2, latest:7551.60, latestRaw:10788.00, remain:261750.30, remainDays:21, needed:12464.30, daily:[null,null,null,null,null,null,null,1887.9,8810.2,7551.6]},
-  {name:'抖音美妆', group:'A组', gmv:755879.45, dur:180.0, target:2100000.00, pct:36.0, seqPct:111.6, latest:81225.00, latestRaw:116035.71, remain:1344120.55, remainDays:21, needed:64005.74, daily:[62291.11,87613.09,79702.45,77202.41,63759.23,71772.81,78137.14,66307.1,87869.11,81225.0]},
-  {name:'拓趣护手霜', group:'A组', gmv:45429.64, dur:117.0, target:280000.00, pct:16.2, seqPct:50.3, latest:5419.10, latestRaw:5644.90, remain:234570.36, remainDays:21, needed:11170.02, daily:[4972.06,6413.51,6525.02,3046.6,3610.08,5002.56,3703.05,3604.7,3132.96,5419.1]},
-  {name:'桂格', group:'B组', gmv:275653.98, dur:135.0, target:900000.00, pct:30.6, seqPct:94.9, latest:31503.10, latestRaw:37062.47, remain:624346.02, remainDays:21, needed:29730.76, daily:[20585.71,20110.86,23100.89,36274.12,30139.8,20797.18,29236.83,34057.98,29847.51,31503.1]},
-  {name:'南方黑芝麻', group:'B组', gmv:242386.98, dur:135.0, target:1000000.00, pct:24.2, seqPct:75.1, latest:29073.26, latestRaw:36341.57, remain:757613.02, remainDays:21, needed:36076.81, daily:[18984.98,30589.15,18170.58,18771.5,26477.31,32940.52,19091.04,23364.11,24924.53,29073.26]},
-  {name:'黑芝麻2', group:'B组', gmv:123698.58, dur:108.0, target:1000000.00, pct:12.4, seqPct:38.3, latest:18596.54, latestRaw:20662.82, remain:876301.42, remainDays:21, needed:41728.64, daily:[20406.45,20204.03,14326.26,null,19105.04,14201.77,7636.23,4265.68,4956.58,18596.54]},
-  {name:'养舒悠', group:'B组', gmv:281672.08, dur:153.0, target:1500000.00, pct:18.8, seqPct:58.2, latest:25178.16, latestRaw:31472.70, remain:1218327.92, remainDays:21, needed:58015.62, daily:[27947.68,39923.2,21652.0,24566.56,15102.88,27799.2,32817.6,29922.4,36762.4,25178.16]},
-  {name:'养舒悠2', group:'B组', gmv:45715.76, dur:90.0, target:150000.00, pct:30.5, seqPct:94.5, latest:7874.88, latestRaw:9843.60, remain:104284.24, remainDays:21, needed:4965.92, daily:[3421.6,3184.8,1718.4,3648.0,1207.2,1070.4,7432.8,8783.6,7374.08,7874.88]},
-  {name:'燕之坊', group:'B组', gmv:824.98, dur:7.0, target:500000.00, pct:0.2, seqPct:0.5, latest:90.86, latestRaw:129.80, remain:499175.02, remainDays:21, needed:23770.24, daily:[null,null,null,null,null,null,null,734.12,90.86,null]},
-  {name:'古井', group:'其他', gmv:25947.95, dur:40.5, target:100000.00, pct:25.9, seqPct:80.4, latest:2550.00, latestRaw:3000.00, remain:74052.05, remainDays:21, needed:3526.29, daily:[3410.2,2281.4,2499.85,2281.4,2045.95,2410.6,2683.45,3898.1,1887.0,2550.0]},
-  {name:'传媒', group:'其他', gmv:173880.63, dur:0.0, target:600000.00, pct:29.0, seqPct:89.8, latest:7800.45, latestRaw:9177.00, remain:426119.37, remainDays:21, needed:20291.40, daily:[6552.65,7839.55,5599.8,7648.77,7313.4,6416.65,8669.91,62810.75,53228.7,7800.45]},
-  {name:'私域', group:'其他', gmv:140570.50, dur:0.0, target:810000.00, pct:17.4, seqPct:53.8, latest:12879.49, latestRaw:12879.49, remain:669429.50, remainDays:21, needed:31877.60, daily:[8606.91,8310.2,8438.73,9915.2,13330.88,11655.43,9904.82,21356.27,36172.57,12879.49]}
+  {name:'阴山优麦冲饮', group:'A组', gmv:820628.73, dur:180.0, target:2280000.00, pct:36.0, seqPct:111.6, latest:81644.25, latestRaw:96052.06, remain:1459371.27, remainDays:21, needed:69493.87, targetSeqGsv:735483.87, daily:[84989.9,96116.24,62925.5,77124.42,79309.09,90723.49,69393.17,72424.44,105978.23,81644.25]},
+  {name:'阴山优麦食品', group:'A组', gmv:200485.58, dur:126.0, target:720000.00, pct:27.8, seqPct:86.3, latest:18869.66, latestRaw:22199.60, remain:519514.42, remainDays:21, needed:24738.78, targetSeqGsv:232258.06, daily:[24167.03,17606.34,17032.42,26353.94,18618.06,23210.01,15497.23,17709.07,21421.82,18869.66]},
+  {name:'追觅吸尘', group:'A组', gmv:59839.80, dur:102.0, target:420000.00, pct:14.2, seqPct:44.2, latest:4917.00, latestRaw:8195.00, remain:360160.20, remainDays:21, needed:17150.49, targetSeqGsv:135483.87, daily:[1078.2,1858.2,7405.2,2878.2,5396.4,7195.2,12292.2,6505.8,10313.4,4917.0]},
+  {name:'追觅投影', group:'A组', gmv:18249.70, dur:14.4, target:280000.00, pct:6.5, seqPct:20.2, latest:7551.60, latestRaw:10788.00, remain:261750.30, remainDays:21, needed:12464.30, targetSeqGsv:90322.58, daily:[null,null,null,null,null,null,null,1887.9,8810.2,7551.6]},
+  {name:'抖音美妆', group:'A组', gmv:755879.45, dur:180.0, target:2100000.00, pct:36.0, seqPct:111.6, latest:81225.00, latestRaw:116035.71, remain:1344120.55, remainDays:21, needed:64005.74, targetSeqGsv:677419.35, daily:[62291.11,87613.09,79702.45,77202.41,63759.23,71772.81,78137.14,66307.1,87869.11,81225.0]},
+  {name:'拓趣护手霜', group:'A组', gmv:45429.64, dur:117.0, target:280000.00, pct:16.2, seqPct:50.3, latest:5419.10, latestRaw:5644.90, remain:234570.36, remainDays:21, needed:11170.02, targetSeqGsv:90322.58, daily:[4972.06,6413.51,6525.02,3046.6,3610.08,5002.56,3703.05,3604.7,3132.96,5419.1]},
+  {name:'桂格', group:'B组', gmv:275653.98, dur:135.0, target:900000.00, pct:30.6, seqPct:94.9, latest:31503.10, latestRaw:37062.47, remain:624346.02, remainDays:21, needed:29730.76, targetSeqGsv:290322.58, daily:[20585.71,20110.86,23100.89,36274.12,30139.8,20797.18,29236.83,34057.98,29847.51,31503.1]},
+  {name:'南方黑芝麻', group:'B组', gmv:242386.98, dur:135.0, target:1000000.00, pct:24.2, seqPct:75.1, latest:29073.26, latestRaw:36341.57, remain:757613.02, remainDays:21, needed:36076.81, targetSeqGsv:322580.65, daily:[18984.98,30589.15,18170.58,18771.5,26477.31,32940.52,19091.04,23364.11,24924.53,29073.26]},
+  {name:'黑芝麻2', group:'B组', gmv:123698.58, dur:108.0, target:1000000.00, pct:12.4, seqPct:38.3, latest:18596.54, latestRaw:20662.82, remain:876301.42, remainDays:21, needed:41728.64, targetSeqGsv:322580.65, daily:[20406.45,20204.03,14326.26,null,19105.04,14201.77,7636.23,4265.68,4956.58,18596.54]},
+  {name:'养舒悠', group:'B组', gmv:281672.08, dur:153.0, target:1500000.00, pct:18.8, seqPct:58.2, latest:25178.16, latestRaw:31472.70, remain:1218327.92, remainDays:21, needed:58015.62, targetSeqGsv:483870.97, daily:[27947.68,39923.2,21652.0,24566.56,15102.88,27799.2,32817.6,29922.4,36762.4,25178.16]},
+  {name:'养舒悠2', group:'B组', gmv:45715.76, dur:90.0, target:150000.00, pct:30.5, seqPct:94.5, latest:7874.88, latestRaw:9843.60, remain:104284.24, remainDays:21, needed:4965.92, targetSeqGsv:48387.10, daily:[3421.6,3184.8,1718.4,3648.0,1207.2,1070.4,7432.8,8783.6,7374.08,7874.88]},
+  {name:'燕之坊', group:'B组', gmv:824.98, dur:7.0, target:500000.00, pct:0.2, seqPct:0.5, latest:90.86, latestRaw:129.80, remain:499175.02, remainDays:21, needed:23770.24, targetSeqGsv:161290.32, daily:[null,null,null,null,null,null,null,734.12,90.86,null]},
+  {name:'古井', group:'其他', gmv:25947.95, dur:40.5, target:100000.00, pct:25.9, seqPct:80.4, latest:2550.00, latestRaw:3000.00, remain:74052.05, remainDays:21, needed:3526.29, targetSeqGsv:32258.06, daily:[3410.2,2281.4,2499.85,2281.4,2045.95,2410.6,2683.45,3898.1,1887.0,2550.0]},
+  {name:'传媒', group:'其他', gmv:173880.63, dur:0.0, target:600000.00, pct:29.0, seqPct:89.8, latest:7800.45, latestRaw:9177.00, remain:426119.37, remainDays:21, needed:20291.40, targetSeqGsv:193548.39, daily:[6552.65,7839.55,5599.8,7648.77,7313.4,6416.65,8669.91,62810.75,53228.7,7800.45]},
+  {name:'私域', group:'其他', gmv:140570.50, dur:0.0, target:810000.00, pct:17.4, seqPct:53.8, latest:12879.49, latestRaw:12879.49, remain:669429.50, remainDays:21, needed:31877.60, targetSeqGsv:261290.32, daily:[8606.91,8310.2,8438.73,9915.2,13330.88,11655.43,9904.82,21356.27,36172.57,12879.49]}
 ];
 const days = ['8/1', '8/2', '8/3', '8/4', '8/5', '8/6', '8/7', '8/8', '8/9', '8/10'];
 
@@ -459,6 +468,115 @@ sortedFinal.forEach((p,i)=>{
 });
 thtml += '</tbody>';
 document.getElementById('tableFinal').innerHTML = thtml;
+
+// ==================== Module 8: 时序进度及目标进度概览 ====================
+// 按分组排序：A组 → B组 → 其他，组内按目标降序
+const groupOrder = {'A组':0, 'B组':1, '其他':2};
+const sortedOverview = [...projects].sort((a,b)=>{
+  const gd = (groupOrder[a.group]??9) - (groupOrder[b.group]??9);
+  if(gd!==0) return gd;
+  return b.target - a.target;
+});
+const overviewLabels = sortedOverview.map(p=>p.name);
+const overviewGroups = sortedOverview.map(p=>p.group);
+
+new Chart(document.getElementById('chartOverview'),{
+  type:'bar',
+  data:{
+    labels: overviewLabels,
+    datasets: [
+      {
+        label: '当月目标时序GSV进度',
+        data: sortedOverview.map(p=>p.targetSeqGsv),
+        backgroundColor: 'rgba(0,212,255,0.25)',
+        borderColor: '#00d4ff',
+        borderWidth: 2,
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+      {
+        label: '实际GSV时序进度',
+        data: sortedOverview.map(p=>p.gmv),
+        backgroundColor: sortedOverview.map(p=>{
+          const rc = groupColors[p.group].bar;
+          return rc; // 用分组色，带透明度
+        }),
+        borderColor: sortedOverview.map(p=>groupColors[p.group].main),
+        borderWidth: 1,
+        borderRadius: 4,
+        borderSkipped: false,
+      }
+    ]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{
+        display:true,
+        position:'top',
+        align:'end',
+        labels:{
+          color:'#8ba4be',
+          font:{size:12,family:"'Microsoft YaHei',sans-serif"},
+          usePointStyle:true,
+          pointStyleWidth:8,
+          padding:16,
+        }
+      },
+      tooltip:{
+        backgroundColor:'rgba(13,25,48,0.95)',
+        borderColor:'#1e3a5f',
+        borderWidth:1,
+        titleColor:'#00d4ff',
+        bodyColor:'#e6f7ff',
+        callbacks:{
+          label:function(ctx){
+            return ctx.dataset.label+': ¥'+ctx.raw.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2});
+          }
+        }
+      }
+    },
+    scales:{
+      x:{
+        grid:{display:false},
+        ticks:{
+          color:'#c9d1d9',
+          font:{size:11,family:"'Microsoft YaHei',sans-serif"},
+          maxRotation:45,
+          minRotation:0,
+        }
+      },
+      y:{
+        grid:{color:'rgba(30,58,95,0.4)'},
+        ticks:{
+          color:'#8ba4be',
+          font:{size:11},
+          callback:function(v){return '¥'+(v/10000).toFixed(v>=10000?1:2)+'万';}
+        }
+      }
+    }
+  },
+  plugins:[{
+    id:'overviewGroupLabels',
+    afterDraw(chart){
+      const {ctx, scales:{x,y}} = chart;
+      ctx.save();
+      ctx.font="bold 11px 'Microsoft YaHei'";
+      ctx.textAlign='center';
+      overviewLabels.forEach((name, i)=>{
+        const g = overviewGroups[i];
+        const gc = groupColors[g].main;
+        const xPos = x.getPixelForValue(i);
+        const yPos = y.bottom + 18;
+        ctx.fillStyle = gc;
+        ctx.fillText('['+g+']', xPos, yPos);
+      });
+      ctx.restore();
+    }
+  }]
+});
 </script>
 </body>
 </html>
