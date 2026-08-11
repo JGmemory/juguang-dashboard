@@ -559,25 +559,46 @@ new Chart(document.getElementById('chartOverview'),{
     }
   },
   plugins:[{
-    id:'overviewDiffLabels',
+    id:'overviewDiffLines',
     afterDatasetsDraw(chart){
       const {ctx, scales:{x,y}} = chart;
-      const meta0 = chart.getDatasetMeta(0); // 目标柱
-      const meta1 = chart.getDatasetMeta(1); // 实际柱
+      const meta0 = chart.getDatasetMeta(0);
+      const meta1 = chart.getDatasetMeta(1);
       ctx.save();
       ctx.textAlign='center';
-      ctx.textBaseline='bottom';
+      ctx.textBaseline='middle';
       sortedOverview.forEach((p, i)=>{
         const diff = p.gmv - p.targetSeqGsv;
+        if(Math.abs(diff) < 1) return; // 差值太小跳过
         const bar0 = meta0.data[i];
         const bar1 = meta1.data[i];
-        const topY = Math.min(bar0.y, bar1.y);
+        // 较短的柱顶Y（较大值）和较高的柱顶Y（较小值）
+        const topLo = Math.max(bar0.y, bar1.y); // 较短柱的顶部
+        const topHi = Math.min(bar0.y, bar1.y); // 较高柱的顶部
         const midX = (bar0.x + bar1.x) / 2;
-        const sign = diff >= 0 ? '+' : '';
-        const valText = '¥' + sign + (diff/10000).toFixed(1) + '万';
-        ctx.font = "bold 10px 'Microsoft YaHei'";
-        ctx.fillStyle = diff >= 0 ? '#00ff88' : '#ff4d4f';
-        ctx.fillText(valText, midX, topY - 6);
+        const midY = (topLo + topHi) / 2;
+        const color = diff >= 0 ? '#00ff88' : '#ff4d4f';
+        // 虚线
+        ctx.beginPath();
+        ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.moveTo(midX, topLo);
+        ctx.lineTo(midX, topHi);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // 差额文字: +8.5W / -12.3W
+        const absW = Math.abs(diff) / 10000;
+        const sign = diff >= 0 ? '+' : '-';
+        const valText = sign + absW.toFixed(1) + 'W';
+        ctx.font = "bold 11px 'Microsoft YaHei'";
+        ctx.fillStyle = color;
+        // 白色背景框
+        const tw = ctx.measureText(valText).width;
+        ctx.fillStyle = 'rgba(5,10,18,0.85)';
+        ctx.fillRect(midX - tw/2 - 4, midY - 9, tw + 8, 18);
+        ctx.fillStyle = color;
+        ctx.fillText(valText, midX, midY);
       });
       ctx.restore();
     }
