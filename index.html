@@ -184,9 +184,9 @@ body{
   </div>
   <div class="panel kpi-card kpi-green">
     <div class="corner-bl"></div><div class="corner-br"></div>
-    <div class="kpi-label">平均完成率</div>
+    <div class="kpi-label">时序平均完成进度</div>
     <div class="kpi-value" id="kpiAvgPct">--</div>
-    <div class="kpi-sub">15 个项目均值</div>
+    <div class="kpi-sub">总GSV÷(目标×已过天数÷31)</div>
   </div>
 </div>
 
@@ -268,8 +268,8 @@ body{
 const projects = [
   {name:'阴山优麦冲饮', group:'A组', gmv:820628.73, dur:180.0, target:2280000.00, pct:36.0, seqPct:111.6, latest:81644.25, remain:1459371.27, remainDays:21, needed:69493.87, daily:[84989.9,96116.24,62925.5,77124.42,79309.09,90723.49,69393.17,72424.44,105978.23,81644.25]},
   {name:'阴山优麦食品', group:'A组', gmv:200485.58, dur:126.0, target:720000.00, pct:27.8, seqPct:86.3, latest:18869.66, remain:519514.42, remainDays:21, needed:24738.78, daily:[24167.03,17606.34,17032.42,26353.94,18618.06,23210.01,15497.23,17709.07,21421.82,18869.66]},
-  {name:'追觅吸尘', group:'A组', gmv:60922.80, dur:90.0, target:420000.00, pct:14.5, seqPct:45.0, latest:6000.00, remain:359077.20, remainDays:21, needed:17098.91, daily:[1078.2,1858.2,7405.2,2878.2,5396.4,7195.2,12292.2,6505.8,10313.4,6000.0]},
-  {name:'追觅投影', group:'A组', gmv:17620.40, dur:14.4, target:280000.00, pct:6.3, seqPct:19.5, latest:7551.60, remain:262379.60, remainDays:21, needed:12494.27, daily:[null,null,null,null,null,null,null,1887.9,8180.9,7551.6]},
+  {name:'追觅吸尘', group:'A组', gmv:59839.80, dur:102.0, target:420000.00, pct:14.2, seqPct:44.2, latest:4917.00, remain:360160.20, remainDays:21, needed:17150.49, daily:[1078.2,1858.2,7405.2,2878.2,5396.4,7195.2,12292.2,6505.8,10313.4,4917.0]},
+  {name:'追觅投影', group:'A组', gmv:18249.70, dur:14.4, target:280000.00, pct:6.5, seqPct:20.2, latest:7551.60, remain:261750.30, remainDays:21, needed:12464.30, daily:[null,null,null,null,null,null,null,1887.9,8810.2,7551.6]},
   {name:'抖音美妆', group:'A组', gmv:755879.45, dur:180.0, target:2100000.00, pct:36.0, seqPct:111.6, latest:81225.00, remain:1344120.55, remainDays:21, needed:64005.74, daily:[62291.11,87613.09,79702.45,77202.41,63759.23,71772.81,78137.14,66307.1,87869.11,81225.0]},
   {name:'拓趣护手霜', group:'A组', gmv:45429.64, dur:117.0, target:280000.00, pct:16.2, seqPct:50.3, latest:5419.10, remain:234570.36, remainDays:21, needed:11170.02, daily:[4972.06,6413.51,6525.02,3046.6,3610.08,5002.56,3703.05,3604.7,3132.96,5419.1]},
   {name:'桂格', group:'B组', gmv:275653.98, dur:135.0, target:900000.00, pct:30.6, seqPct:94.9, latest:31503.10, remain:624346.02, remainDays:21, needed:29730.76, daily:[20585.71,20110.86,23100.89,36274.12,30139.8,20797.18,29236.83,34057.98,29847.51,31503.1]},
@@ -300,7 +300,7 @@ function barColor(v){if(v>=50)return'#00ff88';if(v>=25)return'#ffcc00';return'#f
 const totalGmv = projects.reduce((s,p)=>s+p.gmv,0);
 const totalTarget = projects.reduce((s,p)=>s+p.target,0);
 const totalRemain = totalTarget - totalGmv;
-const avgPct = projects.reduce((s,p)=>s+p.pct,0)/projects.length;
+const avgPct = 78.7;  // 全公司时序完成进度
 const todayGmv = projects.reduce((s,p)=>s+p.latest,0);
 const todayDur = projects.reduce((s,p)=>s+(p.dur/p.daily.filter(d=>d!==null).length || 0),0);
 const liveProjects = projects.filter(p=>p.latest>0).length;
