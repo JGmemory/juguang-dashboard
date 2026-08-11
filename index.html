@@ -442,7 +442,7 @@ new Chart(document.getElementById('chartCompletion'),{
   },
   plugins:[
     {id:'lbl',afterDatasetsDraw(c){const ctx=c.ctx;c.data.datasets[0].data.forEach((v,i)=>{const m=c.getDatasetMeta(0),x=m.data[i].x,y=m.data[i].y;ctx.fillStyle='#fff';ctx.font="bold 11px 'Microsoft YaHei'";ctx.textAlign=v>35?'right':'left';ctx.fillText(v.toFixed(1)+'%',v>35?x-6:x+6,y+4)})}},
-    {id:'deadline',afterDraw(c){const {ctx,chartArea:{top,bottom},scales:{x}}=c;const lx=x.getPixelForValue(shouldPct);if(lx>=0){ctx.save();ctx.beginPath();ctx.strokeStyle='#ff4d4f';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.moveTo(lx,top);ctx.lineTo(lx,bottom);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ff4d4f';ctx.font="bold 11px 'Microsoft YaHei'";ctx.textAlign='center';ctx.fillText(shouldPct+'%',lx,top-6);ctx.restore()}}}
+    {id:'deadline',afterDraw(c){const {ctx,chartArea:{top,bottom},scales:{x}}=c;const lx=x.getPixelForValue(shouldPct);if(lx>=0){ctx.save();ctx.beginPath();ctx.strokeStyle='#ff4d4f';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.moveTo(lx,top);ctx.lineTo(lx,bottom);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ff4d4f';ctx.font="bold 11px 'Microsoft YaHei'";ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(shouldPct+'%',lx,bottom+4);ctx.restore()}}}
   ]
 });
 
