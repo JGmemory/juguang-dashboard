@@ -153,12 +153,12 @@ body{
 <body>
 
 <div class="header">
-  <h1>聚光项目运营数据库（数据截至日期2026年8月10号）</h1>
+  <h1>聚光项目运营数据库（数据截至日期2026年8月11号）</h1>
   
   <div class="meta">
-    <span><i></i>数据更新：2026-08-10</span>
-    <span>数据周期：8月1日 - 8月10日</span>
-    <span>剩余天数：21天</span>
+    <span><i></i>数据更新：2026-08-11</span>
+    <span>数据周期：8月1日 - 8月11日</span>
+    <span>剩余天数：20天</span>
   </div>
 </div>
 
@@ -168,7 +168,7 @@ body{
     <div class="corner-bl"></div><div class="corner-br"></div>
     <div class="kpi-label">当月总GSV（累计）</div>
     <div class="kpi-value" id="kpiTotalGmv">--</div>
-    <div class="kpi-sub">8月1日-10日 累计成交</div>
+    <div class="kpi-sub">8月1日-11日 累计成交</div>
   </div>
   <div class="panel kpi-card kpi-purple">
     <div class="corner-bl"></div><div class="corner-br"></div>
@@ -196,13 +196,13 @@ body{
     <div class="corner-bl"></div><div class="corner-br"></div>
     <div class="kpi-label">当日总GSV</div>
     <div class="kpi-value" id="kpiTodayGmv">--</div>
-    <div class="kpi-sub">8月10日 成交总额</div>
+    <div class="kpi-sub">8月11日 成交总额</div>
   </div>
   <div class="panel kpi-card kpi-yellow">
     <div class="corner-bl"></div><div class="corner-br"></div>
     <div class="kpi-label">当日总直播时长</div>
     <div class="kpi-value" id="kpiTodayDur">--</div>
-    <div class="kpi-sub">8月10日 直播小时数</div>
+    <div class="kpi-sub">8月11日 直播小时数</div>
   </div>
   <div class="panel kpi-card kpi-green">
     <div class="corner-bl"></div><div class="corner-br"></div>
@@ -293,23 +293,23 @@ body{
 
 <script>
 const projects = [
-  {name:'阴山优麦冲饮', group:'A组', gmv:820628.73, dur:180.0, target:2280000.00, pct:36.0, seqPct:111.6, latest:81644.25, latestRaw:96052.06, remain:1459371.27, remainDays:21, needed:69493.87, targetSeqGsv:735483.87, hourlyGsv:4559.05, daily:[84989.9,96116.24,62925.5,77124.42,79309.09,90723.49,69393.17,72424.44,105978.23,81644.25]},
-  {name:'阴山优麦食品', group:'A组', gmv:200485.58, dur:126.0, target:720000.00, pct:27.8, seqPct:86.3, latest:18869.66, latestRaw:22199.60, remain:519514.42, remainDays:21, needed:24738.78, targetSeqGsv:232258.06, hourlyGsv:1591.16, daily:[24167.03,17606.34,17032.42,26353.94,18618.06,23210.01,15497.23,17709.07,21421.82,18869.66]},
-  {name:'追觅吸尘', group:'A组', gmv:59839.80, dur:102.0, target:420000.00, pct:14.2, seqPct:44.2, latest:4917.00, latestRaw:8195.00, remain:360160.20, remainDays:21, needed:17150.49, targetSeqGsv:135483.87, hourlyGsv:586.66, daily:[1078.2,1858.2,7405.2,2878.2,5396.4,7195.2,12292.2,6505.8,10313.4,4917.0]},
-  {name:'追觅投影', group:'A组', gmv:18249.70, dur:14.4, target:280000.00, pct:6.5, seqPct:20.2, latest:7551.60, latestRaw:10788.00, remain:261750.30, remainDays:21, needed:12464.30, targetSeqGsv:90322.58, hourlyGsv:1267.34, daily:[null,null,null,null,null,null,null,1887.9,8810.2,7551.6]},
-  {name:'抖音美妆', group:'A组', gmv:755879.45, dur:180.0, target:2100000.00, pct:36.0, seqPct:111.6, latest:81225.00, latestRaw:116035.71, remain:1344120.55, remainDays:21, needed:64005.74, targetSeqGsv:677419.35, hourlyGsv:4199.33, daily:[62291.11,87613.09,79702.45,77202.41,63759.23,71772.81,78137.14,66307.1,87869.11,81225.0]},
-  {name:'拓趣护手霜', group:'A组', gmv:45429.64, dur:117.0, target:280000.00, pct:16.2, seqPct:50.3, latest:5419.10, latestRaw:5644.90, remain:234570.36, remainDays:21, needed:11170.02, targetSeqGsv:90322.58, hourlyGsv:388.29, daily:[4972.06,6413.51,6525.02,3046.6,3610.08,5002.56,3703.05,3604.7,3132.96,5419.1]},
-  {name:'桂格', group:'B组', gmv:275653.98, dur:135.0, target:900000.00, pct:30.6, seqPct:94.9, latest:31503.10, latestRaw:37062.47, remain:624346.02, remainDays:21, needed:29730.76, targetSeqGsv:290322.58, hourlyGsv:2041.88, daily:[20585.71,20110.86,23100.89,36274.12,30139.8,20797.18,29236.83,34057.98,29847.51,31503.1]},
-  {name:'南方黑芝麻', group:'B组', gmv:242386.98, dur:135.0, target:1000000.00, pct:24.2, seqPct:75.1, latest:29073.26, latestRaw:36341.57, remain:757613.02, remainDays:21, needed:36076.81, targetSeqGsv:322580.65, hourlyGsv:1795.46, daily:[18984.98,30589.15,18170.58,18771.5,26477.31,32940.52,19091.04,23364.11,24924.53,29073.26]},
-  {name:'黑芝麻2', group:'B组', gmv:123698.58, dur:108.0, target:1000000.00, pct:12.4, seqPct:38.3, latest:18596.54, latestRaw:20662.82, remain:876301.42, remainDays:21, needed:41728.64, targetSeqGsv:322580.65, hourlyGsv:1145.36, daily:[20406.45,20204.03,14326.26,null,19105.04,14201.77,7636.23,4265.68,4956.58,18596.54]},
-  {name:'养舒悠', group:'B组', gmv:281672.08, dur:153.0, target:1500000.00, pct:18.8, seqPct:58.2, latest:25178.16, latestRaw:31472.70, remain:1218327.92, remainDays:21, needed:58015.62, targetSeqGsv:483870.97, hourlyGsv:1840.99, daily:[27947.68,39923.2,21652.0,24566.56,15102.88,27799.2,32817.6,29922.4,36762.4,25178.16]},
-  {name:'养舒悠2', group:'B组', gmv:45715.76, dur:90.0, target:150000.00, pct:30.5, seqPct:94.5, latest:7874.88, latestRaw:9843.60, remain:104284.24, remainDays:21, needed:4965.92, targetSeqGsv:48387.10, hourlyGsv:507.95, daily:[3421.6,3184.8,1718.4,3648.0,1207.2,1070.4,7432.8,8783.6,7374.08,7874.88]},
-  {name:'燕之坊', group:'B组', gmv:824.98, dur:7.0, target:500000.00, pct:0.2, seqPct:0.5, latest:90.86, latestRaw:129.80, remain:499175.02, remainDays:21, needed:23770.24, targetSeqGsv:161290.32, hourlyGsv:117.85, daily:[null,null,null,null,null,null,null,734.12,90.86,null]},
-  {name:'古井', group:'其他', gmv:25947.95, dur:40.5, target:100000.00, pct:25.9, seqPct:80.4, latest:2550.00, latestRaw:3000.00, remain:74052.05, remainDays:21, needed:3526.29, targetSeqGsv:32258.06, hourlyGsv:640.69, daily:[3410.2,2281.4,2499.85,2281.4,2045.95,2410.6,2683.45,3898.1,1887.0,2550.0]},
-  {name:'传媒', group:'其他', gmv:173880.63, dur:0.0, target:600000.00, pct:29.0, seqPct:89.8, latest:7800.45, latestRaw:9177.00, remain:426119.37, remainDays:21, needed:20291.40, targetSeqGsv:193548.39, hourlyGsv:0.00, daily:[6552.65,7839.55,5599.8,7648.77,7313.4,6416.65,8669.91,62810.75,53228.7,7800.45]},
-  {name:'私域', group:'其他', gmv:140570.50, dur:0.0, target:810000.00, pct:17.4, seqPct:53.8, latest:12879.49, latestRaw:12879.49, remain:669429.50, remainDays:21, needed:31877.60, targetSeqGsv:261290.32, hourlyGsv:0.00, daily:[8606.91,8310.2,8438.73,9915.2,13330.88,11655.43,9904.82,21356.27,36172.57,12879.49]}
+  {name:'阴山优麦冲饮', group:'A组', gmv:890289.02, dur:198.0, target:2280000.00, pct:39.0, seqPct:110.0, latest:69660.29, latestRaw:81953.28, remain:1389710.98, remainDays:20, needed:69485.55, targetSeqGsv:809032.26, hourlyGsv:4496.41, daily:[84989.9,96116.24,62925.5,77124.42,79309.09,90723.49,69393.17,72424.44,105978.23,81644.25,69660.29]},
+  {name:'阴山优麦食品', group:'A组', gmv:217205.88, dur:139.5, target:720000.00, pct:30.2, seqPct:85.0, latest:16720.30, latestRaw:19670.94, remain:502794.12, remainDays:20, needed:25139.71, targetSeqGsv:255483.87, hourlyGsv:1557.03, daily:[24167.03,17606.34,17032.42,26353.94,18618.06,23210.01,15497.23,17709.07,21421.82,18869.66,16720.3]},
+  {name:'追觅吸尘', group:'A组', gmv:63677.40, dur:110.0, target:420000.00, pct:15.2, seqPct:42.7, latest:3837.60, latestRaw:6396.00, remain:356322.60, remainDays:20, needed:17816.13, targetSeqGsv:149032.26, hourlyGsv:578.89, daily:[1078.2,1858.2,7405.2,2878.2,5396.4,7195.2,12292.2,6505.8,10313.4,4917.0,3837.6]},
+  {name:'追觅投影', group:'A组', gmv:27059.90, dur:18.9, target:280000.00, pct:9.7, seqPct:27.2, latest:8810.20, latestRaw:12586.00, remain:252940.10, remainDays:20, needed:12647.01, targetSeqGsv:99354.84, hourlyGsv:1431.74, daily:[null,null,null,null,null,null,null,1887.9,8810.2,7551.6,8810.2]},
+  {name:'抖音美妆', group:'A组', gmv:854280.98, dur:198.0, target:2100000.00, pct:40.7, seqPct:114.6, latest:98401.53, latestRaw:140573.61, remain:1245719.02, remainDays:20, needed:62285.95, targetSeqGsv:745161.29, hourlyGsv:4314.55, daily:[62291.11,87613.09,79702.45,77202.41,63759.23,71772.81,78137.14,66307.1,87869.11,81225.0,98401.53]},
+  {name:'拓趣护手霜', group:'A组', gmv:49121.61, dur:130.5, target:280000.00, pct:17.5, seqPct:49.4, latest:3691.97, latestRaw:3845.80, remain:230878.39, remainDays:20, needed:11543.92, targetSeqGsv:99354.84, hourlyGsv:376.41, daily:[4972.06,6413.51,6525.02,3046.6,3610.08,5002.56,3703.05,3604.7,3132.96,5419.1,3691.97]},
+  {name:'桂格', group:'B组', gmv:303761.24, dur:148.5, target:900000.00, pct:33.8, seqPct:95.1, latest:28107.26, latestRaw:33067.37, remain:596238.76, remainDays:20, needed:29811.94, targetSeqGsv:319354.84, hourlyGsv:2045.53, daily:[20585.71,20110.86,23100.89,36274.12,30139.8,20797.18,29236.83,34057.98,29847.51,31503.1,28107.26]},
+  {name:'南方黑芝麻', group:'B组', gmv:242386.98, dur:135.0, target:1000000.00, pct:24.2, seqPct:68.3, latest:29073.26, latestRaw:36341.57, remain:757613.02, remainDays:20, needed:37880.65, targetSeqGsv:354838.71, hourlyGsv:1795.46, daily:[18984.98,30589.15,18170.58,18771.5,26477.31,32940.52,19091.04,23364.11,24924.53,29073.26,null]},
+  {name:'黑芝麻2', group:'B组', gmv:133330.29, dur:117.0, target:1000000.00, pct:13.3, seqPct:37.6, latest:9631.71, latestRaw:10701.90, remain:866669.71, remainDays:20, needed:43333.49, targetSeqGsv:354838.71, hourlyGsv:1139.58, daily:[20406.45,20204.03,14326.26,null,19105.04,14201.77,7636.23,4265.68,4956.58,18596.54,9631.71]},
+  {name:'养舒悠', group:'B组', gmv:305266.88, dur:171.0, target:1500000.00, pct:20.4, seqPct:57.4, latest:23594.80, latestRaw:29493.50, remain:1194733.12, remainDays:20, needed:59736.66, targetSeqGsv:532258.06, hourlyGsv:1785.19, daily:[27947.68,39923.2,21652.0,24566.56,15102.88,27799.2,32817.6,29922.4,36762.4,25178.16,23594.8]},
+  {name:'养舒悠2', group:'B组', gmv:45715.76, dur:90.0, target:150000.00, pct:30.5, seqPct:85.9, latest:7874.88, latestRaw:9843.60, remain:104284.24, remainDays:20, needed:5214.21, targetSeqGsv:53225.81, hourlyGsv:507.95, daily:[3421.6,3184.8,1718.4,3648.0,1207.2,1070.4,7432.8,8783.6,7374.08,7874.88,null]},
+  {name:'燕之坊', group:'B组', gmv:824.98, dur:7.0, target:500000.00, pct:0.2, seqPct:0.5, latest:90.86, latestRaw:129.80, remain:499175.02, remainDays:20, needed:24958.75, targetSeqGsv:177419.35, hourlyGsv:117.85, daily:[null,null,null,null,null,null,null,734.12,90.86,null,null]},
+  {name:'古井', group:'其他', gmv:37829.25, dur:49.5, target:100000.00, pct:37.8, seqPct:106.6, latest:10910.60, latestRaw:12836.00, remain:62170.75, remainDays:20, needed:3108.54, targetSeqGsv:35483.87, hourlyGsv:764.23, daily:[3410.2,2281.4,2499.85,2281.4,2045.95,2410.6,2683.45,3898.1,1887.0,3520.7,10910.6]},
+  {name:'传媒', group:'其他', gmv:670030.73, dur:0.0, target:600000.00, pct:111.7, seqPct:314.7, latest:496150.10, latestRaw:583706.00, remain:0.00, remainDays:20, needed:0.00, targetSeqGsv:212903.23, hourlyGsv:0.00, daily:[6552.65,7839.55,5599.8,7648.77,7313.4,6416.65,8669.91,62810.75,53228.7,7800.45,496150.1]},
+  {name:'私域', group:'其他', gmv:140570.50, dur:0.0, target:810000.00, pct:17.4, seqPct:48.9, latest:12879.49, latestRaw:12879.49, remain:669429.50, remainDays:20, needed:33471.47, targetSeqGsv:287419.35, hourlyGsv:0.00, daily:[8606.91,8310.2,8438.73,9915.2,13330.88,11655.43,9904.82,21356.27,36172.57,12879.49,null]}
 ];
-const days = ['8/1', '8/2', '8/3', '8/4', '8/5', '8/6', '8/7', '8/8', '8/9', '8/10'];
+const days = ['8/1', '8/2', '8/3', '8/4', '8/5', '8/6', '8/7', '8/8', '8/9', '8/10', '8/11'];
 
 const groupColors = {
   'A组': {main:'#58a6ff', bar:'rgba(88,166,255,0.85)'},
@@ -327,7 +327,7 @@ function barColor(v){if(v>=50)return'#00ff88';if(v>=25)return'#ffcc00';return'#f
 const totalGmv = projects.reduce((s,p)=>s+p.gmv,0);
 const totalTarget = projects.reduce((s,p)=>s+p.target,0);
 const totalRemain = totalTarget - totalGmv;
-const avgPct = 78.7;  // 全公司时序完成进度
+const avgPct = 88.8;  // 全公司时序完成进度
 const todayGmv = projects.reduce((s,p)=>s+p.latest,0);
 const todayDur = projects.reduce((s,p)=>s+(p.dur/p.daily.filter(d=>d!==null).length || 0),0);
 const liveProjects = projects.filter(p=>p.latest>0).length;
@@ -431,7 +431,7 @@ document.getElementById('todayRank').innerHTML = sortedToday.map((p,i)=>{
 
 // ==================== Completion Ranking ====================
 const sortedPct = [...projects].sort((a,b)=>b.pct-a.pct);
-const shouldPct = 32.3;  // e.g. 32.3 for 10/31
+const shouldPct = 35.5;  // e.g. 32.3 for 10/31
 new Chart(document.getElementById('chartCompletion'),{
   type:'bar',
   data:{labels:sortedPct.map(p=>p.name),datasets:[{data:sortedPct.map(p=>p.pct),backgroundColor:sortedPct.map(p=>barColor(p.pct)),borderRadius:4,borderWidth:0}]},
