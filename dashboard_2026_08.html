@@ -303,7 +303,7 @@ const projects = [
   {name:'南方黑芝麻', group:'B组', gmv:242386.98, dur:135.0, target:1000000.00, pct:24.2, seqPct:68.3, latest:29073.26, latestRaw:36341.57, remain:757613.02, remainDays:20, needed:37880.65, targetSeqGsv:354838.71, hourlyGsv:1795.46, daily:[18984.98,30589.15,18170.58,18771.5,26477.31,32940.52,19091.04,23364.11,24924.53,29073.26,null]},
   {name:'黑芝麻2', group:'B组', gmv:133330.29, dur:117.0, target:1000000.00, pct:13.3, seqPct:37.6, latest:9631.71, latestRaw:10701.90, remain:866669.71, remainDays:20, needed:43333.49, targetSeqGsv:354838.71, hourlyGsv:1139.58, daily:[20406.45,20204.03,14326.26,null,19105.04,14201.77,7636.23,4265.68,4956.58,18596.54,9631.71]},
   {name:'养舒悠', group:'B组', gmv:305266.88, dur:171.0, target:1500000.00, pct:20.4, seqPct:57.4, latest:23594.80, latestRaw:29493.50, remain:1194733.12, remainDays:20, needed:59736.66, targetSeqGsv:532258.06, hourlyGsv:1785.19, daily:[27947.68,39923.2,21652.0,24566.56,15102.88,27799.2,32817.6,29922.4,36762.4,25178.16,23594.8]},
-  {name:'养舒悠2', group:'B组', gmv:45715.76, dur:90.0, target:150000.00, pct:30.5, seqPct:85.9, latest:7874.88, latestRaw:9843.60, remain:104284.24, remainDays:20, needed:5214.21, targetSeqGsv:53225.81, hourlyGsv:507.95, daily:[3421.6,3184.8,1718.4,3648.0,1207.2,1070.4,7432.8,8783.6,7374.08,7874.88,null]},
+  {name:'养舒悠2', group:'B组', gmv:49995.76, dur:99.0, target:150000.00, pct:33.3, seqPct:93.9, latest:4280.00, latestRaw:5350.00, remain:100004.24, remainDays:20, needed:5000.21, targetSeqGsv:53225.81, hourlyGsv:505.01, daily:[3421.6,3184.8,1718.4,3648.0,1207.2,1070.4,7432.8,8783.6,7374.08,7874.88,4280.0]},
   {name:'燕之坊', group:'B组', gmv:824.98, dur:7.0, target:500000.00, pct:0.2, seqPct:0.5, latest:90.86, latestRaw:129.80, remain:499175.02, remainDays:20, needed:24958.75, targetSeqGsv:177419.35, hourlyGsv:117.85, daily:[null,null,null,null,null,null,null,734.12,90.86,null,null]},
   {name:'古井', group:'其他', gmv:37829.25, dur:49.5, target:100000.00, pct:37.8, seqPct:106.6, latest:10910.60, latestRaw:12836.00, remain:62170.75, remainDays:20, needed:3108.54, targetSeqGsv:35483.87, hourlyGsv:764.23, daily:[3410.2,2281.4,2499.85,2281.4,2045.95,2410.6,2683.45,3898.1,1887.0,3520.7,10910.6]},
   {name:'传媒', group:'其他', gmv:670030.73, dur:0.0, target:600000.00, pct:111.7, seqPct:314.7, latest:496150.10, latestRaw:583706.00, remain:0.00, remainDays:20, needed:0.00, targetSeqGsv:212903.23, hourlyGsv:0.00, daily:[6552.65,7839.55,5599.8,7648.77,7313.4,6416.65,8669.91,62810.75,53228.7,7800.45,496150.1]},
@@ -327,7 +327,7 @@ function barColor(v){if(v>=50)return'#00ff88';if(v>=25)return'#ffcc00';return'#f
 const totalGmv = projects.reduce((s,p)=>s+p.gmv,0);
 const totalTarget = projects.reduce((s,p)=>s+p.target,0);
 const totalRemain = totalTarget - totalGmv;
-const avgPct = 88.8;  // 全公司时序完成进度
+const avgPct = 88.9;  // 全公司时序完成进度
 const todayGmv = projects.reduce((s,p)=>s+p.latest,0);
 const todayDur = projects.reduce((s,p)=>s+(p.dur/p.daily.filter(d=>d!==null).length || 0),0);
 const liveProjects = projects.filter(p=>p.latest>0).length;
