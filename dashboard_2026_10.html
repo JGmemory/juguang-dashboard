@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>聚光项目运营数据库</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Microsoft YaHei','PingFang SC',sans-serif;
+  background:#050a12;
+  color:#e6f7ff;
+  padding:20px;
+  min-width:1400px;
+}
+
+/* Header */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:18px 28px;
+  margin-bottom:20px;
+  background:linear-gradient(90deg, rgba(0,102,255,0.08) 0%, rgba(0,212,255,0.05) 50%, rgba(0,102,255,0.08) 100%);
+  border:1px solid #1e3a5f;
+  border-radius:4px;
+  position:relative;
+  overflow:hidden;
+}
+.header::before,.header::after{
+  content:'';position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, transparent, #00d4ff, transparent);
+}
+.header::before{top:0}.header::after{bottom:0}
+.header h1{font-size:26px;font-weight:700;color:#00d4ff;letter-spacing:2px;text-shadow:0 0 12px rgba(0,212,255,0.35)}
+.header .meta{display:flex;gap:24px;font-size:13px;color:#8ba4be}
+.header .meta span{display:flex;align-items:center;gap:6px}
+.header .meta i{display:inline-block;width:6px;height:6px;background:#00ff88;border-radius:50%;box-shadow:0 0 8px #00ff88}
+
+/* Card base */
+.panel{
+  background:rgba(13,25,48,0.55);
+  border:1px solid #1e3a5f;
+  border-radius:4px;
+  position:relative;
+}
+.panel::before{
+  content:'';position:absolute;top:-1px;left:-1px;width:12px;height:12px;
+  border-top:2px solid #00d4ff;border-left:2px solid #00d4ff;
+}
+.panel::after{
+  content:'';position:absolute;top:-1px;right:-1px;width:12px;height:12px;
+  border-top:2px solid #00d4ff;border-right:2px solid #00d4ff;
+}
+.panel .corner-bl{position:absolute;bottom:-1px;left:-1px;width:12px;height:12px;border-bottom:2px solid #00d4ff;border-left:2px solid #00d4ff}
+.panel .corner-br{position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;border-bottom:2px solid #00d4ff;border-right:2px solid #00d4ff}
+
+.panel-title{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 18px;
+  font-size:15px;font-weight:700;color:#00d4ff;
+  border-bottom:1px solid rgba(30,58,95,0.6);
+}
+.panel-title::before{
+  content:'';display:inline-block;width:4px;height:16px;background:#00d4ff;
+  box-shadow:0 0 8px rgba(0,212,255,0.6);
+}
+
+/* KPI section */
+.kpi-row{display:flex;gap:16px;margin-bottom:18px}
+.kpi-card{
+  flex:1;
+  padding:18px 16px 16px;
+  text-align:center;
+  min-width:180px;
+}
+.kpi-card .kpi-label{font-size:12px;color:#8ba4be;margin-bottom:8px}
+.kpi-card .kpi-value{font-size:34px;font-weight:800;letter-spacing:1px}
+.kpi-card .kpi-sub{font-size:11px;color:#5a7a9a;margin-top:6px}
+.kpi-blue .kpi-value{color:#00d4ff;text-shadow:0 0 16px rgba(0,212,255,0.3)}
+.kpi-green .kpi-value{color:#00ff88;text-shadow:0 0 16px rgba(0,255,136,0.25)}
+.kpi-yellow .kpi-value{color:#ffcc00;text-shadow:0 0 16px rgba(255,204,0,0.25)}
+.kpi-red .kpi-value{color:#ff4d4f;text-shadow:0 0 16px rgba(255,77,79,0.25)}
+.kpi-purple .kpi-value{color:#bc8cff;text-shadow:0 0 16px rgba(188,140,255,0.25)}
+
+/* Grid */
+.row{display:flex;gap:18px;margin-bottom:18px}
+.col-2{flex:2}
+.col-1{flex:1}
+.col-half{flex:1}
+
+/* Chart container */
+.chart-box{padding:16px;height:520px;position:relative}
+.chart-box canvas{width:100%!important;height:100%!important}
+
+/* Donut grid - 5列 x 3行，自动撑满 */
+.donut-grid{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,1fr);gap:8px 12px;padding:14px;flex:1;align-content:stretch}
+.donut-item{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-canvas{width:130px;height:130px}
+.donut-name{font-size:11px;color:#8ba4be;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donut-pct{font-size:17px;font-weight:800;margin-top:-6px}
+
+/* Flex column panel for donut area */
+.panel-donut{display:flex;flex-direction:column}
+
+/* Ranking list */
+.rank-list{padding:14px 18px 18px}
+.rank-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid rgba(30,58,95,0.4);
+}
+.rank-item:last-child{border-bottom:none}
+.rank-num{
+  width:24px;height:24px;line-height:24px;text-align:center;
+  font-size:12px;font-weight:700;border-radius:4px;
+  background:#1e3a5f;color:#8ba4be;
+}
+.rank-num.top1{background:#ffd700;color:#0a0e1a}
+.rank-num.top2{background:#c0c0c0;color:#0a0e1a}
+.rank-num.top3{background:#cd7f32;color:#fff}
+.rank-info{flex:1}
+.rank-name{font-size:13px;font-weight:600;color:#e6f7ff;margin-bottom:3px}
+.rank-bar{height:5px;background:#0a1525;border-radius:3px;overflow:hidden}
+.rank-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#0066ff,#00d4ff)}
+.rank-value{font-size:15px;font-weight:700;color:#00d4ff;min-width:70px;text-align:right}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;font-size:12px}
+.data-table th{
+  background:rgba(0,102,255,0.12);color:#00d4ff;
+  padding:10px 8px;text-align:left;font-weight:600;
+  border-bottom:1px solid #1e3a5f;
+}
+.data-table td{padding:10px 8px;border-bottom:1px solid rgba(30,58,95,0.4);color:#c9d1d9}
+.data-table tr:hover td{background:rgba(0,212,255,0.04)}
+.data-table .group-a{color:#58a6ff;font-weight:600}
+.data-table .group-b{color:#3fb950;font-weight:600}
+.data-table .group-o{color:#bc8cff;font-weight:600}
+.pct{font-weight:700}
+.pct-hi{color:#00ff88}
+.pct-md{color:#ffcc00}
+.pct-lo{color:#ff4d4f}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#0a1525}
+::-webkit-scrollbar-thumb{background:#1e3a5f;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#00d4ff}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>聚光项目运营数据库（数据截至日期2026年10月31号）</h1>
+  
+  <div class="meta">
+    <span><i></i>数据更新：2026-10-31</span>
+    <span>数据周期：10月1日 - 10月31日</span>
+    <span>剩余天数：0天</span>
+  </div>
+</div>
+
+<!-- 累计指标 -->
+<div class="kpi-row" id="kpiAccum">
+  <div class="panel kpi-card kpi-blue">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">当月总GSV（累计）</div>
+    <div class="kpi-value" id="kpiTotalGmv">--</div>
+    <div class="kpi-sub">10月1日-31日 累计成交</div>
+  </div>
+  <div class="panel kpi-card kpi-purple">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">本月目标GSV</div>
+    <div class="kpi-value" id="kpiTotalTarget">--</div>
+    <div class="kpi-sub">月度GSV目标</div>
+  </div>
+  <div class="panel kpi-card kpi-red">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">销售差额</div>
+    <div class="kpi-value" id="kpiGap">--</div>
+    <div class="kpi-sub">目标 - 累计GSV</div>
+  </div>
+  <div class="panel kpi-card kpi-green">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">时序平均完成进度</div>
+    <div class="kpi-value" id="kpiAvgPct">--</div>
+    <div class="kpi-sub">总GSV÷(目标×已过天数÷31)</div>
+  </div>
+</div>
+
+<!-- 本日实时指标 -->
+<div class="kpi-row" id="kpiToday">
+  <div class="panel kpi-card kpi-blue">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">当日总GSV</div>
+    <div class="kpi-value" id="kpiTodayGmv">--</div>
+    <div class="kpi-sub">10月31日 成交总额</div>
+  </div>
+  <div class="panel kpi-card kpi-yellow">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">当日总直播时长</div>
+    <div class="kpi-value" id="kpiTodayDur">--</div>
+    <div class="kpi-sub">10月31日 直播小时数</div>
+  </div>
+  <div class="panel kpi-card kpi-green">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">当日开播项目</div>
+    <div class="kpi-value" id="kpiLiveProjects">--</div>
+    <div class="kpi-sub">有GSV数据的项目数</div>
+  </div>
+  <div class="panel kpi-card kpi-blue">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="kpi-label">项目总数</div>
+    <div class="kpi-value" id="kpiProjectCount">15</div>
+    <div class="kpi-sub">A组6 / B组6 / 其他3</div>
+  </div>
+</div>
+
+<!-- 主区域：趋势 + 排行 -->
+<div class="row">
+  <div class="col-2 panel panel-donut">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">聚光各项目本月GSV时序完成进度汇总（含DP项目及自营项目）</div>
+    <div class="donut-grid" id="donutGrid">
+      <!-- dynamically filled -->
+    </div>
+  </div>
+  <div class="col-1 panel">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">项目单日GMV数据复盘汇总</div>
+    <div class="rank-list" id="todayRank"></div>
+  </div>
+</div>
+
+<!-- 中部：完成率排名 + GMV排名 -->
+<div class="row">
+  <div class="col-half panel">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目本月度完成率排名（含DP项目及自营项目）</div>
+    <div class="chart-box"><canvas id="chartCompletion"></canvas></div>
+  </div>
+  <div class="col-half panel">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目本月度GSV排名（含DP项目及自营项目）</div>
+    <div class="chart-box"><canvas id="chartGmv"></canvas></div>
+  </div>
+</div>
+
+<!-- 底部：直播时长排名 + 综合明细 -->
+<div class="row">
+  <div class="col-half panel">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目本月度直播时长排名汇总</div>
+    <div class="chart-box"><canvas id="chartDuration"></canvas></div>
+  </div>
+  <div class="col-half panel">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目本月度完成情况排名数据汇总&剩余完成度数据分析</div>
+    <div class="rank-list" style="padding:0 12px 12px">
+      <table class="data-table" id="tableFinal"></table>
+    </div>
+  </div>
+</div>
+
+<!-- 模块八：各项目时序进度及目标进度概览 -->
+<div class="row">
+  <div class="panel" style="flex:1">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目时序进度及目标进度概览</div>
+    <div class="chart-box" style="height:520px"><canvas id="chartOverview"></canvas></div>
+  </div>
+</div>
+
+<!-- 模块九：各项目时序进度差值排序 -->
+<div class="row">
+  <div class="panel" style="flex:1">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目时序进度差值排序</div>
+    <div class="chart-box" style="height:520px"><canvas id="chartGapRank"></canvas></div>
+  </div>
+</div>
+
+<!-- 模块十：各项目小时均GSV销售排序 -->
+<div class="row">
+  <div class="panel" style="flex:1">
+    <div class="corner-bl"></div><div class="corner-br"></div>
+    <div class="panel-title">各项目小时均GSV销售排序</div>
+    <div class="chart-box" style="height:520px"><canvas id="chartHourlyGsv"></canvas></div>
+  </div>
+</div>
+
+<script>
+const projects = [
+  {name:'阴山优麦冲饮', group:'A组', gmv:2741235.15, dur:558.0, target:2280000.00, pct:120.2, seqPct:120.2, latest:99046.31, latestRaw:116525.07, remain:0.00, remainDays:0, needed:0.00, targetSeqGsv:2280000.00, hourlyGsv:4912.61, daily:[84989.9,96116.24,62925.5,77124.42,79309.09,90723.49,69393.17,72424.44,105978.23,81644.25,69660.29,95577.46,102351.02,85352.16,89245.65,91220.47,108769.99,73051.46,86809.22,85861.27,95239.02,92311.84,109485.85,86121.11,91137.99,104077.59,97399.06,79972.51,91144.13,86772.02,99046.31]},
+  {name:'阴山优麦食品', group:'A组', gmv:756622.25, dur:434.0, target:720000.00, pct:105.1, seqPct:105.1, latest:26779.45, latestRaw:31505.24, remain:0.00, remainDays:0, needed:0.00, targetSeqGsv:720000.00, hourlyGsv:1743.37, daily:[24167.03,17606.34,17032.42,26353.94,18618.06,23210.01,15497.23,17709.07,21421.82,18869.66,16720.3,18995.02,20256.35,26729.35,24659.69,23699.74,34321.54,25798.8,29225.39,25461.92,27103.1,26614.44,30459.77,25993.26,29822.46,33724.19,25289.23,19149.93,36902.79,28429.95,26779.45]},
+  {name:'追觅吸尘', group:'A组', gmv:110140.70, dur:278.3, target:420000.00, pct:26.2, seqPct:26.2, latest:669.12, latestRaw:1115.20, remain:309859.30, remainDays:0, needed:0.00, targetSeqGsv:420000.00, hourlyGsv:395.76, daily:[1078.2,1858.2,7405.2,2878.2,5396.4,7195.2,12292.2,6505.8,10313.4,4917.0,3837.6,4797.0,6333.6,4497.0,6355.8,3777.6,1765.2,3564.0,899.4,2398.8,0.0,null,1079.4,1378.8,1351.94,2397.6,209.4,4988.64,669.12,null,null]},
+  {name:'追觅投影', group:'A组', gmv:130824.40, dur:181.0, target:280000.00, pct:46.7, seqPct:46.7, latest:0.00, latestRaw:0.00, remain:149175.60, remainDays:0, needed:0.00, targetSeqGsv:280000.00, hourlyGsv:722.79, daily:[null,null,null,null,null,null,null,1887.9,8810.2,7551.6,8810.2,8180.9,14473.9,5034.4,5663.7,3146.5,3146.5,5663.7,13145.3,3775.8,6293.0,4405.1,4405.1,16991.1,8180.9,629.3,629.3,0.0,null,null,null]},
+  {name:'抖音美妆', group:'A组', gmv:2830746.44, dur:557.0, target:2100000.00, pct:134.8, seqPct:134.8, latest:95120.23, latestRaw:135886.05, remain:0.00, remainDays:0, needed:0.00, targetSeqGsv:2100000.00, hourlyGsv:5082.13, daily:[62291.11,87613.09,79702.45,77202.41,63759.23,71772.81,78137.14,66307.1,87869.11,81225.0,98401.53,106925.71,113500.93,102355.31,120151.59,120356.94,107383.18,113172.78,146217.95,88408.37,83550.23,87634.98,81990.27,82355.94,87377.11,88338.23,74003.0,71355.35,103116.41,103150.95,95120.23]},
+  {name:'拓趣护手霜', group:'A组', gmv:135043.92, dur:315.0, target:280000.00, pct:48.2, seqPct:48.2, latest:3450.24, latestRaw:3594.00, remain:144956.08, remainDays:0, needed:0.00, targetSeqGsv:280000.00, hourlyGsv:428.71, daily:[4972.06,6413.51,6525.02,3046.6,3610.08,5002.56,3703.05,3604.7,3132.96,5419.1,3691.97,4022.78,4920.12,3221.09,5009.95,3428.54,4363.3,4249.5,3964.61,5584.7,6495.55,3184.36,5689.34,5273.47,3951.55,null,6453.41,4472.54,3791.42,4395.84,3450.24]},
+  {name:'桂格', group:'B组', gmv:897404.04, dur:436.5, target:900000.00, pct:99.7, seqPct:99.7, latest:20711.95, latestRaw:24367.00, remain:2595.96, remainDays:0, needed:0.00, targetSeqGsv:900000.00, hourlyGsv:2055.91, daily:[20585.71,20110.86,23100.89,36274.12,30139.8,20797.18,29236.83,34057.98,29847.51,31503.1,28107.26,40245.15,43761.17,39428.68,39022.16,47036.32,26560.98,22644.74,30503.21,34364.44,37798.78,38566.85,33402.24,32384.79,29523.77,21786.18,15228.85,13185.64,9519.83,17967.07,20711.95]},
+  {name:'南方黑芝麻', group:'B组', gmv:1565448.95, dur:495.0, target:1000000.00, pct:156.5, seqPct:156.5, latest:21191.13, latestRaw:26488.91, remain:0.00, remainDays:0, needed:0.00, targetSeqGsv:1000000.00, hourlyGsv:3162.52, daily:[18984.98,30589.15,18170.58,18771.5,26477.31,32940.52,19091.04,23364.11,24924.53,29073.26,202000.53,243643.14,315996.63,65881.95,24856.67,30250.81,33914.5,19380.67,22266.1,21187.5,30203.93,35898.02,28118.86,34118.06,32537.79,31524.04,34658.8,38732.9,27888.69,28811.25,21191.13]},
+  {name:'黑芝麻2', group:'B组', gmv:307839.77, dur:301.5, target:1000000.00, pct:30.8, seqPct:30.8, latest:5915.34, latestRaw:6572.60, remain:692160.23, remainDays:0, needed:0.00, targetSeqGsv:1000000.00, hourlyGsv:1021.03, daily:[20406.45,20204.03,14326.26,null,19105.04,14201.77,7636.23,4265.68,4956.58,18596.54,9631.71,4593.82,6672.6,5648.84,7829.05,4436.77,6484.08,12609.9,8830.8,9222.9,9124.38,7704.64,10001.41,11497.59,12706.33,5345.28,6300.0,18353.43,11788.98,9443.34,5915.34]},
+  {name:'养舒悠', group:'B组', gmv:1284795.51, dur:531.0, target:1500000.00, pct:85.7, seqPct:85.7, latest:42137.52, latestRaw:52671.90, remain:215204.49, remainDays:0, needed:0.00, targetSeqGsv:1500000.00, hourlyGsv:2419.58, daily:[27947.68,39923.2,21652.0,24566.56,15102.88,27799.2,32817.6,29922.4,36762.4,25178.16,23594.8,28708.4,34911.12,42409.36,58388.88,50818.12,76710.64,43350.96,67596.08,41457.12,56873.76,69218.35,52015.36,47331.92,39552.24,31672.72,57661.44,52385.2,43260.0,43069.44,42137.52]},
+  {name:'养舒悠2', group:'B组', gmv:52902.72, dur:108.0, target:150000.00, pct:35.3, seqPct:35.3, latest:2906.96, latestRaw:3633.70, remain:97097.28, remainDays:0, needed:0.00, targetSeqGsv:150000.00, hourlyGsv:489.84, daily:[3421.6,3184.8,1718.4,3648.0,1207.2,1070.4,7432.8,8783.6,7374.08,7874.88,4280.0,2906.96,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},
+  {name:'燕之坊', group:'B组', gmv:3158.43, dur:17.0, target:500000.00, pct:0.6, seqPct:0.6, latest:139.86, latestRaw:199.80, remain:496841.57, remainDays:0, needed:0.00, targetSeqGsv:500000.00, hourlyGsv:185.79, daily:[null,null,null,null,null,null,null,734.12,90.86,null,null,null,null,null,null,null,null,1522.5,671.09,139.86,null,null,null,null,null,null,null,null,null,null,null]},
+  {name:'古井', group:'其他', gmv:102437.66, dur:139.5, target:100000.00, pct:102.4, seqPct:102.4, latest:1565.70, latestRaw:1842.00, remain:0.00, remainDays:0, needed:0.00, targetSeqGsv:100000.00, hourlyGsv:734.32, daily:[3410.2,2281.4,2499.85,2281.4,2045.95,2410.6,2683.45,3898.1,1887.0,3520.7,10910.6,1501.95,7328.7,4792.21,2211.7,3291.2,2624.8,3012.4,2466.7,2760.8,3949.1,5721.35,2933.35,1588.65,2493.05,3465.45,6613.0,2589.1,1836.0,1863.2,1565.7]},
+  {name:'传媒', group:'其他', gmv:1179790.76, dur:0.0, target:600000.00, pct:196.6, seqPct:196.6, latest:17525.05, latestRaw:20617.70, remain:0.00, remainDays:0, needed:0.00, targetSeqGsv:600000.00, hourlyGsv:0.00, daily:[6552.65,7839.55,5599.8,7648.77,7313.4,6416.65,8669.91,62810.75,53228.7,7800.45,496150.1,15101.1,11094.2,11731.7,11672.2,8633.45,10363.2,9685.75,10198.81,97114.79,63655.74,9195.98,13488.48,11393.06,16691.79,51077.61,53429.95,54580.2,15375.65,17751.32,17525.05]},
+  {name:'私域', group:'其他', gmv:406794.95, dur:0.0, target:810000.00, pct:50.2, seqPct:50.2, latest:8915.00, latestRaw:8915.00, remain:403205.05, remainDays:0, needed:0.00, targetSeqGsv:810000.00, hourlyGsv:0.00, daily:[8606.91,8310.2,8438.73,9915.2,13330.88,11655.43,9904.82,21356.27,36172.57,12879.49,15542.07,9944.95,10198.48,9074.65,36946.38,9126.39,8466.1,9842.56,9124.37,9932.15,11852.15,9751.02,14663.75,9993.4,11320.5,12281.9,11554.05,47694.58,8915.0,null,null]}
+];
+const days = ['10/1', '10/2', '10/3', '10/4', '10/5', '10/6', '10/7', '10/8', '10/9', '10/10', '10/11', '10/12', '10/13', '10/14', '10/15', '10/16', '10/17', '10/18', '10/19', '10/20', '10/21', '10/22', '10/23', '10/24', '10/25', '10/26', '10/27', '10/28', '10/29', '10/30', '10/31'];
+
+const groupColors = {
+  'A组': {main:'#58a6ff', bar:'rgba(88,166,255,0.85)'},
+  'B组': {main:'#3fb950', bar:'rgba(63,185,80,0.85)'},
+  '其他': {main:'#bc8cff', bar:'rgba(188,140,255,0.85)'}
+};
+
+function fmt(n){if(n===null||n===undefined)return'-';return n>=10000?(n/10000).toFixed(2)+'万':'¥'+n.toLocaleString('zh-CN',{maximumFractionDigits:0})}
+function fmt2(n){return '¥'+n.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2})}
+function fmtPct(v){return v.toFixed(1)+'%'}
+function pctCls(v){if(v>=50)return'pct-hi';if(v>=25)return'pct-md';return'pct-lo'}
+function barColor(v){if(v>=50)return'#00ff88';if(v>=25)return'#ffcc00';return'#ff4d4f'}
+
+// ==================== KPI ====================
+const totalGmv = projects.reduce((s,p)=>s+p.gmv,0);
+const totalTarget = projects.reduce((s,p)=>s+p.target,0);
+const totalRemain = totalTarget - totalGmv;
+const avgPct = 98.9;  // 全公司时序完成进度
+const todayGmv = projects.reduce((s,p)=>s+p.latest,0);
+const todayDur = projects.reduce((s,p)=>s+(p.dur/p.daily.filter(d=>d!==null).length || 0),0);
+const liveProjects = projects.filter(p=>p.latest>0).length;
+
+document.getElementById('kpiTotalGmv').textContent = fmt(totalGmv);
+document.getElementById('kpiTotalTarget').textContent = fmt(totalTarget);
+document.getElementById('kpiGap').textContent = fmt(totalRemain);
+document.getElementById('kpiAvgPct').textContent = fmtPct(avgPct);
+document.getElementById('kpiTodayGmv').textContent = fmt(todayGmv);
+document.getElementById('kpiTodayDur').textContent = todayDur.toFixed(1)+'h';
+document.getElementById('kpiLiveProjects').textContent = liveProjects;
+
+// ==================== Donut Time-Sequential Grid ====================
+const donutGlow = {
+  id:'donutGlow',
+  beforeDraw(chart){
+    const {ctx, chartArea:{top,left,right,bottom}} = chart;
+    const cx = (left+right)/2, cy = (top+bottom)/2, r = Math.min(right-left,bottom-top)/2 * 0.7;
+    ctx.save();
+    ctx.shadowColor = chart.data.datasets[0].backgroundColor[0];
+    ctx.shadowBlur = 10;
+    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fillStyle='transparent';ctx.fill();
+    ctx.restore();
+  }
+};
+
+const donutCenterText = {
+  id:'donutCenterText',
+  afterDraw(chart){
+    const {ctx,chartArea:{top,left,right,bottom},data:{datasets}} = chart;
+    const cx = (left+right)/2, cy = (top+bottom)/2;
+    const seqPct = chart.options._seqPct || 0;
+    const gColor = datasets[0].backgroundColor[0];
+    ctx.save();
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font="bold 18px 'Microsoft YaHei'";ctx.fillStyle=gColor;
+    ctx.fillText(seqPct.toFixed(1)+'%', cx, cy);
+    ctx.restore();
+  }
+};
+
+// 时序完成率颜色：红<90%  黄90-100%  绿≥100%
+function seqColor(v){if(v<90)return'#ff4d4f';if(v<100)return'#ffcc00';return'#00ff88';}
+
+const sortedDonut = [...projects].sort((a,b)=>b.seqPct-a.seqPct);
+let donutHtml = '';
+sortedDonut.forEach((p, idx)=>{
+  const cid = 'donut_'+idx;
+  const gc = groupColors[p.group].main;
+  const sc = seqColor(p.seqPct);
+  donutHtml += `<div class="donut-item"><div class="donut-canvas"><canvas id="${cid}"></canvas></div><div class="donut-pct" style="color:${sc}">${p.seqPct.toFixed(1)}%</div><div class="donut-name">${p.name}<br><span style="color:${gc};font-size:10px">[${p.group}]</span></div></div>`;
+});
+document.getElementById('donutGrid').innerHTML = donutHtml;
+
+setTimeout(()=>{
+  sortedDonut.forEach((p, idx)=>{
+    const canvas = document.getElementById('donut_'+idx);
+    if(!canvas) return;
+    const seqPct = p.seqPct;
+    const displayPct = Math.min(seqPct, 100);
+    const sc = seqColor(seqPct);
+    new Chart(canvas, {
+      type:'doughnut',
+      data:{
+        datasets:[{
+          data:[displayPct, Math.max(100-displayPct, 0.01)],
+          backgroundColor:[sc, 'rgba(30,58,95,0.6)'],
+          borderColor:['rgba(255,255,255,0.1)', 'transparent'],
+          borderWidth:1,
+          cutout:'70%',
+          borderRadius:3,
+        }]
+      },
+      options:{
+        _seqPct: seqPct,
+        responsive:true, maintainAspectRatio:true,
+        plugins:{legend:{display:false}, tooltip:{enabled:false}},
+        events:[],
+      },
+      plugins:[donutGlow, donutCenterText]
+    });
+  });
+}, 200);
+
+// ==================== Today GMV Rank List (原始GMV) ====================
+const sortedToday = [...projects].sort((a,b)=>b.latestRaw-a.latestRaw);
+const maxToday = sortedToday[0].latestRaw;
+document.getElementById('todayRank').innerHTML = sortedToday.map((p,i)=>{
+  const cls = i===0?'top1':i===1?'top2':i===2?'top3':'';
+  const gc = groupColors[p.group];
+  return `
+  <div class="rank-item">
+    <div class="rank-num ${cls}">${i+1}</div>
+    <div class="rank-info">
+      <div class="rank-name">${p.name} <span style="color:${gc.main};font-size:11px;font-weight:500">[${p.group}]</span></div>
+      <div class="rank-bar"><div class="rank-fill" style="width:${(p.latestRaw/maxToday*100).toFixed(1)}%;background:linear-gradient(90deg,${gc.main},#00d4ff)"></div></div>
+    </div>
+    <div class="rank-value">${fmt(p.latestRaw)}</div>
+  </div>`;
+}).join('');
+
+// ==================== Completion Ranking ====================
+const sortedPct = [...projects].sort((a,b)=>b.pct-a.pct);
+const shouldPct = 100.0;  // e.g. 32.3 for 10/31
+new Chart(document.getElementById('chartCompletion'),{
+  type:'bar',
+  data:{labels:sortedPct.map(p=>p.name),datasets:[{data:sortedPct.map(p=>p.pct),backgroundColor:sortedPct.map(p=>barColor(p.pct)),borderRadius:4,borderWidth:0}]},
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(30,58,95,0.4)'},ticks:{color:'#8ba4be',callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:'#c9d1d9',font:{size:11}}}}
+  },
+  plugins:[
+    {id:'lbl',afterDatasetsDraw(c){const ctx=c.ctx;c.data.datasets[0].data.forEach((v,i)=>{const m=c.getDatasetMeta(0),x=m.data[i].x,y=m.data[i].y;ctx.fillStyle='#fff';ctx.font="bold 11px 'Microsoft YaHei'";ctx.textAlign=v>35?'right':'left';ctx.fillText(v.toFixed(1)+'%',v>35?x-6:x+6,y+4)})}},
+    {id:'deadline',afterDraw(c){const {ctx,chartArea:{top,bottom},scales:{x}}=c;const lx=x.getPixelForValue(shouldPct);if(lx>=0){ctx.save();ctx.beginPath();ctx.strokeStyle='#ff4d4f';ctx.lineWidth=2;ctx.setLineDash([6,4]);ctx.moveTo(lx,top);ctx.lineTo(lx,bottom);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ff4d4f';ctx.font="bold 11px 'Microsoft YaHei'";ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(shouldPct+'%',lx,bottom+4);ctx.restore()}}}
+  ]
+});
+
+// ==================== GMV Ranking ====================
+const sortedGmv = [...projects].sort((a,b)=>b.gmv-a.gmv);
+new Chart(document.getElementById('chartGmv'),{
+  type:'bar',
+  data:{labels:sortedGmv.map(p=>p.name),datasets:[{data:sortedGmv.map(p=>p.gmv),backgroundColor:sortedGmv.map(p=>groupColors[p.group].bar),borderRadius:4,borderWidth:0}]},
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(30,58,95,0.4)'},ticks:{color:'#8ba4be',callback:v=>'¥'+fmt(v)}},y:{grid:{display:false},ticks:{color:'#c9d1d9',font:{size:11}}}}
+  },
+  plugins:[{id:'lbl',afterDatasetsDraw(c){const ctx=c.ctx;c.data.datasets[0].data.forEach((v,i)=>{const m=c.getDatasetMeta(0),x=m.data[i].x,y=m.data[i].y;ctx.fillStyle='#fff';ctx.font="bold 10px 'Microsoft YaHei'";ctx.fillText('¥'+fmt(v),x+5,y+4)})}}]
+});
+
+// ==================== Duration Ranking ====================
+const sortedDur = [...projects].sort((a,b)=>b.dur-a.dur);
+new Chart(document.getElementById('chartDuration'),{
+  type:'bar',
+  data:{labels:sortedDur.map(p=>p.name),datasets:[{data:sortedDur.map(p=>p.dur),backgroundColor:sortedDur.map(p=>groupColors[p.group].bar),borderRadius:4,borderWidth:0}]},
+  options:{
+    indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(30,58,95,0.4)'},ticks:{color:'#8ba4be',callback:v=>v+'h'}},y:{grid:{display:false},ticks:{color:'#c9d1d9',font:{size:11}}}}
+  },
+  plugins:[{id:'lbl',afterDatasetsDraw(c){const ctx=c.ctx;c.data.datasets[0].data.forEach((v,i)=>{const m=c.getDatasetMeta(0),x=m.data[i].x,y=m.data[i].y;ctx.fillStyle='#fff';ctx.font="bold 10px 'Microsoft YaHei'";ctx.fillText(v+'h',x+5,y+4)})}}]
+});
+
+// ==================== Final Table ====================
+const sortedFinal = [...projects].sort((a,b)=>b.pct-a.pct);
+let thtml = `<thead><tr><th>#</th><th>项目</th><th>区域</th><th>完成率</th><th>当月GSV</th><th>剩余GSV</th><th>剩余日均</th></tr></thead><tbody>`;
+sortedFinal.forEach((p,i)=>{
+  const cls = pctCls(p.pct);
+  const gcls = p.group==='A组'?'group-a':p.group==='B组'?'group-b':'group-o';
+  thtml += `<tr>
+    <td>${i+1}</td>
+    <td style="font-weight:600">${p.name}</td>
+    <td class="${gcls}">${p.group}</td>
+    <td class="${cls} pct">${fmtPct(p.pct)}</td>
+    <td>${fmt2(p.gmv)}</td>
+    <td style="color:#ff4d4f">${fmt(p.remain)}</td>
+    <td style="color:#ffcc00">${fmt(p.needed)}/天</td>
+  </tr>`;
+});
+thtml += '</tbody>';
+document.getElementById('tableFinal').innerHTML = thtml;
+
+// ==================== Module 8: 时序进度及目标进度概览 ====================
+// 按分组排序：A组 → B组 → 其他，组内按目标降序
+const groupOrder = {'A组':0, 'B组':1, '其他':2};
+const sortedOverview = [...projects].sort((a,b)=>{
+  const gd = (groupOrder[a.group]??9) - (groupOrder[b.group]??9);
+  if(gd!==0) return gd;
+  return b.target - a.target;
+});
+const overviewLabels = sortedOverview.map(p=>p.name);
+const overviewGroups = sortedOverview.map(p=>p.group);
+
+new Chart(document.getElementById('chartOverview'),{
+  type:'bar',
+  data:{
+    labels: overviewLabels,
+    datasets: [
+      {
+        label: '当月目标时序GSV进度',
+        data: sortedOverview.map(p=>p.targetSeqGsv),
+        backgroundColor: 'rgba(0,212,255,0.25)',
+        borderColor: '#00d4ff',
+        borderWidth: 2,
+        borderRadius: 4,
+        borderSkipped: false,
+      },
+      {
+        label: '实际GSV时序进度',
+        data: sortedOverview.map(p=>p.gmv),
+        backgroundColor: sortedOverview.map(p=>{
+          const rc = groupColors[p.group].bar;
+          return rc; // 用分组色，带透明度
+        }),
+        borderColor: sortedOverview.map(p=>groupColors[p.group].main),
+        borderWidth: 1,
+        borderRadius: 4,
+        borderSkipped: false,
+      }
+    ]
+  },
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{
+      legend:{
+        display:true,
+        position:'top',
+        align:'end',
+        labels:{
+          color:'#8ba4be',
+          font:{size:12,family:"'Microsoft YaHei',sans-serif"},
+          usePointStyle:true,
+          pointStyleWidth:8,
+          padding:16,
+        }
+      },
+      tooltip:{
+        backgroundColor:'rgba(13,25,48,0.95)',
+        borderColor:'#1e3a5f',
+        borderWidth:1,
+        titleColor:'#00d4ff',
+        bodyColor:'#e6f7ff',
+        callbacks:{
+          label:function(ctx){
+            return ctx.dataset.label+': ¥'+ctx.raw.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2});
+          }
+        }
+      }
+    },
+    scales:{
+      x:{
+        grid:{display:false},
+        ticks:{
+          color:'#c9d1d9',
+          font:{size:11,family:"'Microsoft YaHei',sans-serif"},
+          maxRotation:45,
+          minRotation:0,
+        }
+      },
+      y:{
+        grid:{color:'rgba(30,58,95,0.4)'},
+        ticks:{
+          color:'#8ba4be',
+          font:{size:11},
+          callback:function(v){return '¥'+(v/10000).toFixed(v>=10000?1:2)+'万';}
+        }
+      }
+    }
+  },
+  plugins:[{
+    id:'overviewDiffLines',
+    afterDatasetsDraw(chart){
+      const {ctx, scales:{x,y}} = chart;
+      const meta0 = chart.getDatasetMeta(0);
+      const meta1 = chart.getDatasetMeta(1);
+      ctx.save();
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      sortedOverview.forEach((p, i)=>{
+        const diff = p.gmv - p.targetSeqGsv;
+        if(Math.abs(diff) < 1) return; // 差值太小跳过
+        const bar0 = meta0.data[i];
+        const bar1 = meta1.data[i];
+        // 较短的柱顶Y（较大值）和较高的柱顶Y（较小值）
+        const topLo = Math.max(bar0.y, bar1.y); // 较短柱的顶部
+        const topHi = Math.min(bar0.y, bar1.y); // 较高柱的顶部
+        const midX = (bar0.x + bar1.x) / 2;
+        const midY = (topLo + topHi) / 2;
+        const color = diff >= 0 ? '#00ff88' : '#ff4d4f';
+        // 虚线
+        ctx.beginPath();
+        ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.moveTo(midX, topLo);
+        ctx.lineTo(midX, topHi);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // 差额文字: +8.5W / -12.3W
+        const absW = Math.abs(diff) / 10000;
+        const sign = diff >= 0 ? '+' : '-';
+        const valText = sign + absW.toFixed(1) + 'W';
+        ctx.font = "bold 11px 'Microsoft YaHei'";
+        ctx.fillStyle = color;
+        // 白色背景框
+        const tw = ctx.measureText(valText).width;
+        ctx.fillStyle = 'rgba(5,10,18,0.85)';
+        ctx.fillRect(midX - tw/2 - 4, midY - 9, tw + 8, 18);
+        ctx.fillStyle = color;
+        ctx.fillText(valText, midX, midY);
+      });
+      ctx.restore();
+    }
+  }]
+});
+
+// ==================== Module 9: 时序进度差值排序 ====================
+const sortedNeeded = [...projects].sort((a,b)=>b.needed - a.needed);
+new Chart(document.getElementById('chartGapRank'),{
+  type:'bar',
+  data:{
+    labels: sortedNeeded.map(p=>p.name),
+    datasets: [{
+      data: sortedNeeded.map(p=>p.needed),
+      backgroundColor: sortedNeeded.map(p=>{
+        // 颜色按紧迫度：日均>5万红色，1-5万黄色，<1万绿色
+        if(p.needed>=50000) return '#ff4d4f';
+        if(p.needed>=10000) return '#ffcc00';
+        return '#00ff88';
+      }),
+      borderRadius: 4,
+      borderWidth: 0,
+    }]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'rgba(13,25,48,0.95)',
+        borderColor:'#1e3a5f',
+        borderWidth:1,
+        titleColor:'#00d4ff',
+        bodyColor:'#e6f7ff',
+        callbacks:{
+          label:function(ctx){
+            return '剩余日均: ¥'+ctx.raw.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2})+'/天';
+          }
+        }
+      }
+    },
+    scales:{
+      x:{
+        grid:{color:'rgba(30,58,95,0.4)'},
+        ticks:{
+          color:'#8ba4be',
+          font:{size:10},
+          callback:function(v){return '¥'+(v/10000).toFixed(1)+'W/天';}
+        }
+      },
+      y:{
+        grid:{display:false},
+        ticks:{color:'#c9d1d9',font:{size:11}}
+      }
+    }
+  },
+  plugins:[{
+    id:'gapRankLabels',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = "bold 10px 'Microsoft YaHei'";
+      ctx.textBaseline = 'middle';
+      meta.data.forEach((bar, i)=>{
+        const v = sortedNeeded[i].needed;
+        const wText = '¥'+(v/10000).toFixed(1)+'W';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'left';
+        ctx.fillText(wText, bar.x + 6, bar.y);
+      });
+      ctx.restore();
+    }
+  }]
+});
+
+// ==================== Module 10: 小时均GSV销售排序 ====================
+const sortedHourly = [...projects].sort((a,b)=>b.hourlyGsv - a.hourlyGsv);
+const maxHourly = sortedHourly[0].hourlyGsv;
+new Chart(document.getElementById('chartHourlyGsv'),{
+  type:'bar',
+  data:{
+    labels: sortedHourly.map(p=>p.name),
+    datasets: [{
+      data: sortedHourly.map(p=>p.hourlyGsv),
+      backgroundColor: sortedHourly.map(p=>{
+        const ratio = p.hourlyGsv / maxHourly;
+        if(ratio >= 0.7) return 'rgba(0,212,255,0.7)';
+        if(ratio >= 0.35) return 'rgba(0,212,255,0.45)';
+        return 'rgba(0,212,255,0.2)';
+      }),
+      borderRadius: 4,
+      borderWidth: 0,
+    }]
+  },
+  options:{
+    indexAxis:'y',
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:'rgba(13,25,48,0.95)',
+        borderColor:'#1e3a5f',
+        borderWidth:1,
+        titleColor:'#00d4ff',
+        bodyColor:'#e6f7ff',
+        callbacks:{
+          label:function(ctx){
+            var p = sortedHourly[ctx.dataIndex];
+            return '小时均GSV: ¥'+ctx.raw.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2})+'/h | GSV: ¥'+p.gmv.toLocaleString('zh-CN')+' | 时长: '+p.dur.toFixed(1)+'h';
+          }
+        }
+      }
+    },
+    scales:{
+      x:{
+        grid:{color:'rgba(30,58,95,0.4)'},
+        ticks:{
+          color:'#8ba4be',
+          font:{size:10},
+          callback:function(v){return '¥'+(v/10000).toFixed(1)+'W/h';}
+        }
+      },
+      y:{
+        grid:{display:false},
+        ticks:{color:'#c9d1d9',font:{size:11}}
+      }
+    }
+  },
+  plugins:[{
+    id:'hourlyLabels',
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = "bold 10px 'Microsoft YaHei'";
+      ctx.textBaseline = 'middle';
+      meta.data.forEach((bar, i)=>{
+        const v = sortedHourly[i].hourlyGsv;
+        const wText = '¥'+(v/10000).toFixed(2)+'W/h';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'left';
+        ctx.fillText(wText, bar.x + 6, bar.y);
+      });
+      ctx.restore();
+    }
+  }]
+});
+</script>
+</body>
+</html>
